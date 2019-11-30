@@ -6,56 +6,28 @@
 
     <LinearLayout
         android:id="@+id/large_item_container"
-        android:layout_width="290dp"
+        android:layout_width="match_parent"
         android:layout_height="80dp"
         android:layout_marginEnd="10dp"
         android:dividerHeight="12.0dp"
+        android:gravity="center"
         android:orientation="horizontal">
 
-        <LinearLayout
-            android:id="@+id/item"
-            android:layout_width="142dp"
-            android:layout_height="match_parent"
-            android:dividerHeight="10.0sp"
-            android:orientation="vertical">
+        <TextView
+            android:id="@+id/item_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="left"
+            android:text="Large Text"
+            android:textAppearance="?android:attr/textAppearanceLarge" />
 
-            <TextView
-                android:id="@+id/item_title"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Large Text"
-                android:textAppearance="?android:attr/textAppearanceLarge" />
-
-            <TextView
-                android:id="@+id/item_amount"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Small Text"
-                android:textAppearance="?android:attr/textAppearanceSmall" />
-
-            <TextView
-                android:id="@+id/item_price"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Small Text"
-                android:textAppearance="?android:attr/textAppearanceSmall" />
-
-        </LinearLayout>
-
+        <TextView
+            android:id="@+id/item_amount"
+            android:layout_marginLeft="100dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Small Text"
+            android:textAppearance="?android:attr/textAppearanceSmall" />
     </LinearLayout>
-
-    <Button
-        android:id="@+id/item_delete"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentRight="true"
-        android:layout_marginLeft="10dp"
-        android:layout_marginTop="10dp"
-        android:layout_marginRight="5dp"
-        android:background="@color/colorAccent"
-        android:onClick="deleteItem"
-        android:text="delete" />
-
 
 </RelativeLayout>

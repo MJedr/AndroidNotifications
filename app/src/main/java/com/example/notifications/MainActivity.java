@@ -16,6 +16,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ListView;
@@ -25,6 +26,7 @@ import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import android.app.Notification;
@@ -49,7 +51,7 @@ public class MainActivity extends AppCompatActivity {
     private EditText itemInput;
     private EditText amountInput;
     private GroceryItemArrayAdapter mAdapter;
-    private ItemHelper mHelper;
+    ItemHelper mHelper;
     private ListView mItemListView;
     private Context mContext;
     private BroadcastReceiver myReceiver = new MyReceiver();
@@ -66,6 +68,7 @@ public class MainActivity extends AppCompatActivity {
         mHelper = new ItemHelper(this);
         mItemListView = findViewById(R.id.list_to_buy);
         Button btnadd = findViewById(R.id.btn1);
+        updateUI();
     }
 
     public void sendOnChannel1(View v) {
@@ -150,6 +153,12 @@ public class MainActivity extends AppCompatActivity {
         super.onStop();
         unregisterReceiver(myReceiver);
         Log.i("ReceiverTest", "wyrejestrowano odbiorcę");
+    }
+
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+        return super.onCreateOptionsMenu(menu);
     }
 
 }

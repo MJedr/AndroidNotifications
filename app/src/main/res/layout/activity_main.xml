@@ -29,7 +29,6 @@
             android:id="@+id/btn1"
             android:text="Add" />
 
-
     <ListView
         android:id="@+id/list_to_buy"
         android:layout_width="wrap_content"
