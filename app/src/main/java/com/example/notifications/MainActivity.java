@@ -6,6 +6,7 @@ import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.TaskStackBuilder;
+import android.content.BroadcastReceiver;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
@@ -24,6 +25,7 @@ import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import android.app.Notification;
 import android.view.View;
@@ -50,37 +52,20 @@ public class MainActivity extends AppCompatActivity {
     private ItemHelper mHelper;
     private ListView mItemListView;
     private Context mContext;
+    private BroadcastReceiver myReceiver = new MyReceiver();
+    private static final String PRODUCT_ADDED =
+            BuildConfig.APPLICATION_ID + ".PRODUCT_ADDED";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         mContext = getApplicationContext();
-
-        notificationManager = NotificationManagerCompat.from(getApplicationContext());
         itemInput = findViewById(R.id.add_product);
         amountInput = findViewById(R.id.add_amount);
         mHelper = new ItemHelper(this);
         mItemListView = findViewById(R.id.list_to_buy);
         Button btnadd = findViewById(R.id.btn1);
-
-//        btnadd.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                String item = itemInput.getText().toString();
-//                String amount = amountInput.getText().toString();
-//                SQLiteDatabase db = mHelper.getWritableDatabase();
-////                mHelper.onUpgrade(db, 6, 7);
-//
-//                ContentValues values = new ContentValues();
-//                values.put(Item.ItemEntry.COL_ITEM_NAME, item);
-//                values.put(Item.ItemEntry.COL_AMOUNT, amount);
-//                db.insertWithOnConflict(Item.ItemEntry.TABLE,
-//                        null, values, SQLiteDatabase.CONFLICT_REPLACE);
-//                db.close();
-//                updateUI();
-//            }
-//        });
     }
 
     public void sendOnChannel1(View v) {
@@ -95,35 +80,19 @@ public class MainActivity extends AppCompatActivity {
         db.insertWithOnConflict(Item.ItemEntry.TABLE,
                 null, values, SQLiteDatabase.CONFLICT_REPLACE);
         db.close();
-
-        createNotificationChannels();
-
-        Log.i("dupa", "dupa");
-        Notification notification = new NotificationCompat.Builder(this, CHANNEL_1_ID)
-                .setSmallIcon(R.drawable.ic_launcher)
-                .setContentTitle(item)
-                .setContentText(amount)
-                .setPriority(NotificationCompat.PRIORITY_HIGH)
-                .setCategory(NotificationCompat.CATEGORY_MESSAGE)
-                .build();
-
         updateUI();
-        notificationManager.notify(1, notification);
+
+        String string = "Dodano " + item + " (ilość:" + amount + ") do listy";
+        registerReceiver(myReceiver,new IntentFilter("com.example.notifications.PRODUCT_ADDED"));
+        Intent intent = new Intent("com.example.notifications.PRODUCT_ADDED");
+        intent.putExtra("string", string);
+        sendBroadcast(intent);
+
+        itemInput.getText().clear();
+        amountInput.getText().clear();
+
     }
 
-    private void createNotificationChannels() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            NotificationChannel channel1 = new NotificationChannel(
-                    CHANNEL_1_ID,
-                    "Channel 1",
-                    NotificationManager.IMPORTANCE_HIGH
-            );
-            channel1.setDescription("This is Channel 1");
-
-            NotificationManager manager = getSystemService(NotificationManager.class);
-            manager.createNotificationChannel(channel1);
-        }
-    }
 
     private void updateUI() {
         final ArrayList<GroceryItem> groceryItemList = new ArrayList<>();
@@ -138,8 +107,6 @@ public class MainActivity extends AppCompatActivity {
             String name = cursor.getString(cursor.getColumnIndex("name"));
             String amount = cursor.getString(cursor.getColumnIndex("amount"));
             groceryItemList.add(new GroceryItem(name, amount));
-//                itemList.add(cursor.getString(index));
-
         }
 
         if (mAdapter == null) {
@@ -169,6 +136,20 @@ public class MainActivity extends AppCompatActivity {
         db.delete(Item.ItemEntry.TABLE, Item.ItemEntry.COL_ITEM_NAME + " = ?", new String[] {item});
         db.close();
         updateUI();
+    }
+
+    @Override
+    protected void onStart(){
+        super.onStart();
+        registerReceiver(myReceiver, new IntentFilter("com.example.shoppingapp.PRODUCT_ADDED"));
+        Log.i("ReceiverTest", "zarejestrowano odbiorcę");
+    }
+
+    @Override
+    protected void onStop(){
+        super.onStop();
+        unregisterReceiver(myReceiver);
+        Log.i("ReceiverTest", "wyrejestrowano odbiorcę");
     }
 
 }
